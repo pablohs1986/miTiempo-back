@@ -13,17 +13,16 @@ mongoose.connect(process.env.DB_URI, {
 
 checkConnection();
 
-app.get('/', (req, res) => {
-	res.send('Hello, miTiempo!!!');
+// Server initialization
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+	console.log(`Listening on ${PORT}.`);
 });
 
-// Server initialization
-let port = process.env.PORT;
-if (port == null || port == '') {
-	port = 3000;
-}
-app.listen(port, () => {
-	console.log(`Listening on ${port}.`);
+// Routes
+app.get('/', (req, res) => {
+	res.send('Hello, miTiempo!!!');
 });
 
 // Aux methods
