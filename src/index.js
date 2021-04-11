@@ -1,9 +1,15 @@
 require('dotenv').config();
+require('./models/User');
 const express = require('express');
 const mongoose = require('mongoose');
+require('./middlewares/passport');
+const bodyParser = require('body-parser');
+const authRoutes = require('./routes/authRoutes');
 
 // Express instance
 const app = express();
+app.use(bodyParser.json());
+app.use(authRoutes);
 
 // MongoDB connection
 mongoose.connect(process.env.DB_URI, {
@@ -21,9 +27,6 @@ app.listen(PORT, () => {
 });
 
 // Routes
-app.get('/', (req, res) => {
-	res.send('Hello, miTiempo!!!');
-});
 
 // Aux methods
 /** Method that checks the connection to MongoDB cluster and show on
