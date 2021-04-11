@@ -2,7 +2,6 @@ require('dotenv').config();
 require('./models/User');
 const express = require('express');
 const mongoose = require('mongoose');
-require('./middlewares/passport');
 const bodyParser = require('body-parser');
 const authRoutes = require('./routes/authRoutes');
 
