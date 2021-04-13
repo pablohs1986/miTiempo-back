@@ -7,8 +7,8 @@ const authRoutes = require('./routes/authRoutes');
 const cors = require('cors');
 
 // Express instance
-app.use(cors);
 const app = express();
+app.use(cors);
 app.use(bodyParser.json());
 app.use(authRoutes);
 
