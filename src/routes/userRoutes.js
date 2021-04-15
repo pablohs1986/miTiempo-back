@@ -15,10 +15,12 @@ router.use(requireAuth); //Everything done here, need to validate the token
  */
 router.get('/getUserInfo', async (req, res) => {
 	const user = await User.findById(req.user._id);
+	const email = user.email;
+	const name = user.name;
+	const city = user.city;
 
 	try {
-		res.send({ user });
-		console.log(user);
+		res.send({ email, name, city });
 	} catch (error) {
 		return res.status(422).send({
 			Error:
