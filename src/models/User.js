@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
 	city: String,
 });
 
-/** Method that encrypt the password when a user is saved.
+/** Hook that encrypt the password when a user is saved.
  * If it's not an update, encrypt the password using bcrypt library.
  */
 userSchema.pre('save', function (next) {
@@ -41,7 +41,7 @@ userSchema.pre('save', function (next) {
 	});
 });
 
-/** Method that compares a candidate password that is received
+/** Hook that compares a candidate password that is received
  * as a parameter with the user's password.
  * Returns a promise where the candidated password is compared
  * with the stored password using bcrypt library.
