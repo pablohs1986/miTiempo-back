@@ -1,10 +1,12 @@
 require('dotenv').config();
 require('./models/User');
+require('./models/Task');
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
+const taskRoutes = require('./routes/taskRoutes');
 const cors = require('cors');
 
 // Express instance
@@ -21,6 +23,7 @@ app.use(
 app.use(bodyParser.json());
 app.use(authRoutes);
 app.use(userRoutes);
+app.use(taskRoutes);
 
 // MongoDB connection
 mongoose.connect(process.env.DB_URI, {
@@ -42,7 +45,7 @@ app.listen(PORT, () => {
  */
 function checkConnection() {
 	mongoose.connection.on('connected', () => {
-		console.log('Connected to MongoDB instance.');
+		console.log('Connected to MongoDB.');
 	});
 
 	mongoose.connection.on('error', (error) => {
