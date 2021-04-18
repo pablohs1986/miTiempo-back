@@ -11,13 +11,9 @@ module.exports = (req, res, next) => {
 /** Method that takes all the fields from the request body. */
 function getFieldsFromBody(body) {
 	let fields = {};
-
 	for (const [key, value] of Object.entries(body)) {
 		fields[key] = value;
 	}
-
-	console.log(fields);
-
 	return fields;
 }
 
@@ -31,7 +27,5 @@ function deleteFieldsWithoutValue(fields) {
 			delete fields[key];
 		}
 	}
-	console.log(fieldsToUpdate);
-
 	return fieldsToUpdate;
 }

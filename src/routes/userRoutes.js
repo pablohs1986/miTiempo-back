@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const User = mongoose.model('User');
 const requireAuth = require('../middlewares/requireAuth');
+const checkFieldsToUpdate = require('../middlewares/checkFieldsToUpdate');
 
 // Express router instance
 const router = express.Router();
@@ -33,17 +34,20 @@ router.get('/getUserInfo', async (req, res) => {
  * to be modified. If the validation is successful, apply the changes. If the validation
  * is not correct, it sends an error.
  */
-router.post('/updateUserInfo', async (req, res) => {
-	const { email, name, city, newPassword } = req.body;
+router.post('/updateUserInfo', checkFieldsToUpdate, async (req, res) => {
 	const userId = req.user._id;
+	let fieldsToUpdate = req.fieldsToUpdate;
+	console.log(fieldsToUpdate);
 
 	try {
-		const user = await User.findById(userId);
-		user.email = email;
-		user.password = newPassword;
-		user.name = name;
-		user.city = city;
-
+		const user = await User.findByIdAndUpdate(
+			userId,
+			{ $set: { ...fieldsToUpdate } },
+			{
+				runValidators: true,
+				new: true,
+			}
+		);
 		await user.save();
 		res.send(user);
 	} catch (error) {

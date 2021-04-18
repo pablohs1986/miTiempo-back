@@ -16,14 +16,10 @@ const userSchema = new mongoose.Schema({
 	city: String,
 });
 
-/** Hook that encrypt the password when a user is saved.
- * If it's not an update, encrypt the password using bcrypt library.
+/** Hook that encrypt the password when a user is saved, using bcrypt library.
  */
 userSchema.pre('save', function (next) {
 	const user = this;
-	if (!user.isModified('password')) {
-		return next();
-	}
 
 	bcrypt.genSalt(10, (err, salt) => {
 		if (err) {
