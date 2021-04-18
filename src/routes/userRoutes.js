@@ -37,7 +37,6 @@ router.get('/getUserInfo', async (req, res) => {
 router.post('/updateUserInfo', checkFieldsToUpdate, async (req, res) => {
 	const userId = req.user._id;
 	let fieldsToUpdate = req.fieldsToUpdate;
-	console.log(fieldsToUpdate);
 
 	try {
 		const user = await User.findByIdAndUpdate(
