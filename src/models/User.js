@@ -16,10 +16,15 @@ const userSchema = new mongoose.Schema({
 	city: String,
 });
 
-/** Hook that encrypt the password when a user is saved, using bcrypt library.
+/** Hook that encrypt the password when a user is saved using bcrypt library.
  */
 userSchema.pre('save', function (next) {
 	const user = this;
+
+	// FIXME: si lo quito, no se hace login tras cambiar contraseña
+	if (!user.isModified('password')) {
+		return next();
+	}
 
 	bcrypt.genSalt(10, (err, salt) => {
 		if (err) {
