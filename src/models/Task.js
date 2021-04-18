@@ -16,7 +16,7 @@ const taskSchema = new mongoose.Schema({
 	},
 	category: {
 		type: String,
-		default: 'Task',
+		default: 'General',
 	},
 	duration: {
 		type: Number,

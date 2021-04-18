@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const Task = mongoose.model('Task');
 const requireAuth = require('../middlewares/requireAuth');
+const checkFieldsToUpdate = require('../middlewares/checkFieldsToUpdate');
 
 // Express router instance
 const router = express.Router();
@@ -46,26 +47,66 @@ router.post('/addTask', async (req, res) => {
 	}
 });
 
-/** Route that lists all the tasks for a user */
+/** Route that lists all the tasks for a user, filtered or not by category */
 router.get('/listTasks', async (req, res) => {
-	const tasks = await Task.find({ userId: req.user._id });
-	res.send(tasks);
+	if (req.body.categoryFilter === '') {
+		const tasks = await Task.find({ userId: req.user._id });
+		res.send(tasks);
+	} else {
+		const tasksFiltered = await Task.find({
+			userId: req.user._id,
+			category: req.body.categoryFilter,
+		});
+		res.send(tasksFiltered);
+	}
 });
 
-/** TODO: (documentar) List today tasks */
+/** Route that list all today tasks for a user, filtered or not by category */
 router.get('/listTodayTasks', async (req, res) => {
-	const tasks = await Task.find({
-		userId: req.user._id,
-		expirationDate: new Date().toISOString().slice(0, 10),
-	});
-	res.send(tasks);
+	if (req.body.categoryFilter === '') {
+		const tasks = await Task.find({
+			userId: req.user._id,
+			expirationDate: new Date().toISOString().slice(0, 10),
+		});
+		res.send(tasks);
+	} else {
+		const tasksFiltered = await Task.find({
+			userId: req.user._id,
+			category: req.body.categoryFilter,
+			expirationDate: new Date().toISOString().slice(0, 10),
+		});
+		res.send(tasksFiltered);
+	}
 });
 
-/** TODO: Delete Task */
+/** Route that updates a task found by its id.
+ * It makes use of the middleware checkFieldsToUpdate to detect the fields
+ * to update.
+ * */
+router.post('/updateTask', checkFieldsToUpdate, async (req, res) => {
+	const taskId = req.body.taskId;
+	let fieldsToUpdate = req.fieldsToUpdate;
+
+	try {
+		const task = await Task.findByIdAndUpdate(
+			taskId,
+			{ $set: { ...fieldsToUpdate } },
+			{
+				runValidators: true,
+				new: true,
+			}
+		);
+		res.send(task._id + ' succesfully updated.');
+	} catch (error) {
+		res.status(422).send({ error: error.message });
+	}
+});
+
+/** Route that delete a task found by its id. */
 router.delete('/deleteTask', async (req, res) => {
 	try {
-		await Task.findByIdAndDelete(req.task._id);
-		res.send(req.task._id + ' succesfully deleted.');
+		const taskToDelete = await Task.findByIdAndDelete(req.body.taskId);
+		res.send(taskToDelete._id + ' succesfully deleted.');
 	} catch (error) {
 		res.status(422).send({ error: error.message });
 	}
