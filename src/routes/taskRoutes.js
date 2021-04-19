@@ -52,7 +52,7 @@ router.post('/addTask', async (req, res) => {
  */
 router.get('/listTasks/:categoryFilter', async (req, res) => {
 	try {
-		if (req.params.categoryFilter === 'allCategories') {
+		if (req.params.categoryFilter === 'All') {
 			const tasks = await Task.find({ userId: req.user._id });
 			res.send(tasks);
 		} else {
@@ -75,7 +75,7 @@ router.get('/listTasks/:categoryFilter', async (req, res) => {
  */
 router.get('/listTodayTasks/:categoryFilter', async (req, res) => {
 	try {
-		if (req.params.categoryFilter === 'allCategories') {
+		if (req.params.categoryFilter === 'All') {
 			const tasks = await Task.find({
 				userId: req.user._id,
 				expirationDate: new Date().toISOString().slice(0, 10),
