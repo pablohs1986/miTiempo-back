@@ -47,36 +47,66 @@ router.post('/addTask', async (req, res) => {
 	}
 });
 
-/** Route that lists all the tasks for a user, filtered or not by category */
+/** Route that lists all the tasks for a user, filtered or not by category.
+ * If there's a problem doing the query, it throws an error.
+ */
 router.get('/listTasks/:categoryFilter', async (req, res) => {
-	if (req.params.categoryFilter === 'allCategories') {
-		const tasks = await Task.find({ userId: req.user._id });
-		res.send(tasks);
-	} else {
-		const tasksFiltered = await Task.find({
-			userId: req.user._id,
-			category: req.params.categoryFilter,
-		});
+	try {
+		if (req.params.categoryFilter === 'allCategories') {
+			const tasks = await Task.find({ userId: req.user._id });
+			res.send(tasks);
+		} else {
+			const tasksFiltered = await Task.find({
+				userId: req.user._id,
+				category: req.params.categoryFilter,
+			});
 
-		res.send(tasksFiltered);
+			res.send(tasksFiltered);
+		}
+	} catch (error) {
+		return res.status(422).send({
+			Error: 'Something went wrong retrieving tasks. Try again.',
+		});
 	}
 });
 
-/** Route that list all today tasks for a user, filtered or not by category */
+/** Route that list all today tasks for a user, filtered or not by category.
+ * If there's a problem doing the query, it throws an error.
+ */
 router.get('/listTodayTasks/:categoryFilter', async (req, res) => {
-	if (req.params.categoryFilter === 'allCategories') {
-		const tasks = await Task.find({
-			userId: req.user._id,
-			expirationDate: new Date().toISOString().slice(0, 10),
+	try {
+		if (req.params.categoryFilter === 'allCategories') {
+			const tasks = await Task.find({
+				userId: req.user._id,
+				expirationDate: new Date().toISOString().slice(0, 10),
+			});
+			res.send(tasks);
+		} else {
+			const tasksFiltered = await Task.find({
+				userId: req.user._id,
+				category: req.params.categoryFilter,
+				expirationDate: new Date().toISOString().slice(0, 10),
+			});
+			res.send(tasksFiltered);
+		}
+	} catch (error) {
+		return res.status(422).send({
+			Error: 'Something went wrong retrieving today tasks. Try again.',
 		});
-		res.send(tasks);
-	} else {
-		const tasksFiltered = await Task.find({
-			userId: req.user._id,
-			category: req.params.categoryFilter,
-			expirationDate: new Date().toISOString().slice(0, 10),
+	}
+});
+
+/** Route that list all unique categories on the database.
+ * If there's a problem doing the query, it throws an error.
+ */
+router.get('/getCategories', async (req, res) => {
+	try {
+		const categories = await Task.find().distinct('category');
+		res.send(categories);
+	} catch (error) {
+		return res.status(422).send({
+			Error: 'Something went wrong retrieving categories. Try again.',
 		});
-		res.send(tasksFiltered);
 	}
 });
 

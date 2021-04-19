@@ -14,12 +14,11 @@ router.use(requireAuth); //Everything done here, need to validate the token
  * is not correct, it sends an error message.
  */
 router.get('/getUserInfo', async (req, res) => {
-	const user = await User.findById(req.user._id);
-	const email = user.email;
-	const name = user.name;
-	const city = user.city;
-
 	try {
+		const user = await User.findById(req.user._id);
+		const email = user.email;
+		const name = user.name;
+		const city = user.city;
 		res.send({ email, name, city });
 	} catch (error) {
 		return res.status(422).send({
