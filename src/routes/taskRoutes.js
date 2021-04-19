@@ -48,22 +48,23 @@ router.post('/addTask', async (req, res) => {
 });
 
 /** Route that lists all the tasks for a user, filtered or not by category */
-router.get('/listTasks', async (req, res) => {
-	if (req.body.categoryFilter === '') {
+router.get('/listTasks/:categoryFilter', async (req, res) => {
+	if (req.params.categoryFilter === 'allCategories') {
 		const tasks = await Task.find({ userId: req.user._id });
 		res.send(tasks);
 	} else {
 		const tasksFiltered = await Task.find({
 			userId: req.user._id,
-			category: req.body.categoryFilter,
+			category: req.params.categoryFilter,
 		});
+
 		res.send(tasksFiltered);
 	}
 });
 
 /** Route that list all today tasks for a user, filtered or not by category */
-router.get('/listTodayTasks', async (req, res) => {
-	if (req.body.categoryFilter === '') {
+router.get('/listTodayTasks/:categoryFilter', async (req, res) => {
+	if (req.params.categoryFilter === 'allCategories') {
 		const tasks = await Task.find({
 			userId: req.user._id,
 			expirationDate: new Date().toISOString().slice(0, 10),
@@ -72,7 +73,7 @@ router.get('/listTodayTasks', async (req, res) => {
 	} else {
 		const tasksFiltered = await Task.find({
 			userId: req.user._id,
-			category: req.body.categoryFilter,
+			category: req.params.categoryFilter,
 			expirationDate: new Date().toISOString().slice(0, 10),
 		});
 		res.send(tasksFiltered);
