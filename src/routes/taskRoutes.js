@@ -49,7 +49,6 @@ router.post('/addTask', async (req, res) => {
 
 /** Route that lists all the tasks for a user, filtered or not by category */
 router.get('/listTasks/:categoryFilter', async (req, res) => {
-	console.log('>>>>' + req.params.categoryFilter);
 	if (req.params.categoryFilter === 'allCategories') {
 		const tasks = await Task.find({ userId: req.user._id });
 		res.send(tasks);
@@ -65,7 +64,6 @@ router.get('/listTasks/:categoryFilter', async (req, res) => {
 
 /** Route that list all today tasks for a user, filtered or not by category */
 router.get('/listTodayTasks/:categoryFilter', async (req, res) => {
-	console.log('>>>>' + req.params.categoryFilter);
 	if (req.params.categoryFilter === 'allCategories') {
 		const tasks = await Task.find({
 			userId: req.user._id,
