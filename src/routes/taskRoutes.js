@@ -99,7 +99,7 @@ router.get('/listTodayTasks/:categoryFilter', async (req, res) => {
 /** Route that list all unique categories on the database.
  * If there's a problem doing the query, it throws an error.
  */
-router.get('/getCategories', async (req, res) => {
+router.get('/listCategories', async (req, res) => {
 	try {
 		const categories = await Task.find().distinct('category');
 		res.send(categories);
