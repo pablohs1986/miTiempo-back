@@ -22,22 +22,22 @@ const taskSchema = new mongoose.Schema({
 		type: Number,
 		default: 0,
 	},
-	repeat: {
+	repetition: {
 		type: String,
 		default: '',
 	},
-	isPomodoro: {
-		type: Boolean,
-		default: false,
-	},
 	category: {
-		type: String,
+        type: String,
 		default: 'Other',
 	},
 	color: {
-		type: String,
+        type: String,
 		default: '#C830CC',
 	},
+    isPomodoro: {
+        type: Boolean,
+        default: false,
+    },
 	creationDate: {
 		type: Date,
 		default: new Date(),
