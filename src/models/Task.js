@@ -14,9 +14,9 @@ const taskSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
-	category: {
+	day: {
 		type: String,
-		default: 'General',
+		default: '',
 	},
 	duration: {
 		type: Number,
@@ -26,6 +26,14 @@ const taskSchema = new mongoose.Schema({
 		type: String,
 		default: '',
 	},
+	isPomodoro: {
+		type: Boolean,
+		default: false,
+	},
+	category: {
+		type: String,
+		default: 'Other',
+	},
 	color: {
 		type: String,
 		default: '#C830CC',
@@ -33,14 +41,6 @@ const taskSchema = new mongoose.Schema({
 	creationDate: {
 		type: Date,
 		default: new Date(),
-	},
-	expirationDate: {
-		type: Date,
-		default: null,
-	},
-	isPomodoro: {
-		type: Boolean,
-		default: false,
 	},
 	isDone: {
 		type: Boolean,

@@ -16,13 +16,13 @@ router.post('/addTask', async (req, res) => {
 	const {
 		title,
 		description,
-		category,
+		day,
 		duration,
 		repeat,
+		isPomodoro,
+		category,
 		color,
 		creationDate,
-		expirationDate,
-		isPomodoro,
 		isDone,
 	} = req.body;
 
@@ -30,13 +30,13 @@ router.post('/addTask', async (req, res) => {
 		const task = new Task({
 			title,
 			description,
-			category,
+			day,
 			duration,
 			repeat,
+			isPomodoro,
+			category,
 			color,
 			creationDate,
-			expirationDate,
-			isPomodoro,
 			isDone,
 			userId: req.user._id,
 		});
