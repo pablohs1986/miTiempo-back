@@ -48,8 +48,8 @@ router.post('/addTask', newTaskDataHandler, async (req, res) => {
 	}
 });
 
-/** Route that lists all the tasks for a user, filtered or not by category,
- * sortered by creation date.
+/** Route that lists all the tasks for a user, filtered or not by category
+ * and sortered by creation date.
  * If there's a problem doing the query, it throws an error.
  */
 router.get('/listTasks/:categoryFilter', async (req, res) => {
@@ -74,8 +74,9 @@ router.get('/listTasks/:categoryFilter', async (req, res) => {
 	}
 });
 
-/** Route that list all today tasks for a user, filtered or not by category,
- * sortered by creation date.
+// FIXME:
+/** Route that list all today tasks for a user, filtered or not by category
+ * and sortered by creation date.
  * If there's a problem doing the query, it throws an error.
  */
 router.get('/listTodayTasks/:categoryFilter', async (req, res) => {
