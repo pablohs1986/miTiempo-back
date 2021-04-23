@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const Task = mongoose.model('Task');
 const requireAuth = require('../middlewares/requireAuth');
 const checkFieldsToUpdate = require('../middlewares/checkFieldsToUpdate');
+const handleNewTaskData = require('../middlewares/handleNewTaskData');
 
 // Express router instance
 const router = express.Router();
@@ -12,7 +13,7 @@ router.use(requireAuth); //Everything done here, need to validate the token
  * It receives a token that is validated by the authorization layer. If the
  * validation is successful, make a request for add a new task for that user.
  */
-router.post('/addTask', async (req, res) => {
+router.post('/addTask', handleNewTaskData, async (req, res) => {
 	const {
 		title,
 		description,
