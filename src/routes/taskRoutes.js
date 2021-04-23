@@ -48,19 +48,22 @@ router.post('/addTask', newTaskDataHandler, async (req, res) => {
 	}
 });
 
-/** Route that lists all the tasks for a user, filtered or not by category.
+/** Route that lists all the tasks for a user, filtered or not by category,
+ * sortered by creation date.
  * If there's a problem doing the query, it throws an error.
  */
 router.get('/listTasks/:categoryFilter', async (req, res) => {
 	try {
 		if (req.params.categoryFilter === 'All') {
-			const tasks = await Task.find({ userId: req.user._id });
+			const tasks = await Task.find({ userId: req.user._id }).sort({
+				creationDate,
+			});
 			res.send(tasks);
 		} else {
 			const tasksFiltered = await Task.find({
 				userId: req.user._id,
 				category: req.params.categoryFilter,
-			});
+			}).sort({ creationDate });
 
 			res.send(tasksFiltered);
 		}
@@ -71,8 +74,8 @@ router.get('/listTasks/:categoryFilter', async (req, res) => {
 	}
 });
 
-// FIXME:
-/** Route that list all today tasks for a user, filtered or not by category.
+/** Route that list all today tasks for a user, filtered or not by category,
+ * sortered by creation date.
  * If there's a problem doing the query, it throws an error.
  */
 router.get('/listTodayTasks/:categoryFilter', async (req, res) => {
@@ -81,14 +84,14 @@ router.get('/listTodayTasks/:categoryFilter', async (req, res) => {
 			const tasks = await Task.find({
 				userId: req.user._id,
 				day: new Date().toLocaleString('en-GB', { weekday: 'long' }),
-			});
+			}).sort({ creationDate });
 			res.send(tasks);
 		} else {
 			const tasksFiltered = await Task.find({
 				userId: req.user._id,
 				category: req.params.categoryFilter,
 				day: new Date().toLocaleString('en-GB', { weekday: 'long' }),
-			});
+			}).sort({ creationDate });
 			res.send(tasksFiltered);
 		}
 	} catch (error) {
