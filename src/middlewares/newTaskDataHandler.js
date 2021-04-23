@@ -2,6 +2,7 @@
  * handling in the backend.
  * */
 module.exports = (req, res, next) => {
+	req.body.day = handleDataType('day', req.body.day);
 	req.body.duration = handleDataType('duration', req.body.duration);
 	req.body.color = handleDataType('color', req.body.color);
 	req.body.isPomodoro = handleDataType('isPomodoro', req.body.isPomodoro);
@@ -11,6 +12,10 @@ module.exports = (req, res, next) => {
 /** Method that, depending on the type of data, transforms it */
 function handleDataType(dataType, data) {
 	switch (dataType) {
+		case 'day':
+			if (data === 'Today') {
+				return new Date().toLocaleString('en-GB', { weekday: 'long' });
+			}
 		case 'duration':
 			if (data === '5 min') {
 				return 300;
