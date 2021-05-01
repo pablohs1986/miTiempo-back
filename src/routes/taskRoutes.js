@@ -73,7 +73,6 @@ router.get('/listTasks/:categoryFilter', async (req, res) => {
 	}
 });
 
-// FIXME:
 /** Route that list all today tasks for a user, filtered or not by category.
  * If there's a problem doing the query, it throws an error.
  */
@@ -96,6 +95,21 @@ router.get('/listTodayTasks/:categoryFilter', async (req, res) => {
 	} catch (error) {
 		return res.status(422).send({
 			Error: 'Something went wrong retrieving today tasks. Try again.',
+		});
+	}
+});
+
+/** Route that get a task by id. If there's a problem with the query, throws an error */
+router.get('/getTaskById/:id', async (req, res) => {
+	const taskId = req.params.id;
+
+	try {
+		const task = await Task.findById(taskId);
+		res.send(task);
+	} catch (error) {
+		console.log(error);
+		return res.status(422).send({
+			Error: 'Something went wrong retrieving task. Try again.',
 		});
 	}
 });
