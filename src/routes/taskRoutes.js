@@ -117,24 +117,29 @@ router.get('/listCategories', async (req, res) => {
  * It makes use of the middleware checkFieldsToUpdate to detect the fields
  * to update.
  * */
-router.post('/updateTask', checkFieldsToUpdate, async (req, res) => {
-	const taskId = req.body.taskId;
-	let fieldsToUpdate = req.fieldsToUpdate;
+router.post(
+	'/updateTask',
+	checkFieldsToUpdate,
+	newTaskDataHandler,
+	async (req, res) => {
+		const taskId = req.body.taskId;
+		let fieldsToUpdate = req.fieldsToUpdate;
 
-	try {
-		const task = await Task.findByIdAndUpdate(
-			taskId,
-			{ $set: { ...fieldsToUpdate } },
-			{
-				runValidators: true,
-				new: true,
-			}
-		);
-		res.send(task._id + ' succesfully updated.');
-	} catch (error) {
-		res.status(422).send({ error: error.message });
+		try {
+			const task = await Task.findByIdAndUpdate(
+				taskId,
+				{ $set: { ...fieldsToUpdate } },
+				{
+					runValidators: true,
+					new: true,
+				}
+			);
+			res.send(task._id + ' succesfully updated.');
+		} catch (error) {
+			res.status(422).send({ error: error.message });
+		}
 	}
-});
+);
 
 /** Route that delete a task found by its id. */
 router.delete('/deleteTask', async (req, res) => {
