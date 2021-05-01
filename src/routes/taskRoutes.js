@@ -119,8 +119,8 @@ router.get('/listCategories', async (req, res) => {
  * */
 router.post(
 	'/updateTask',
-	checkFieldsToUpdate,
 	newTaskDataHandler,
+	checkFieldsToUpdate,
 	async (req, res) => {
 		const taskId = req.body.taskId;
 		let fieldsToUpdate = req.fieldsToUpdate;
