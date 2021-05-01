@@ -143,8 +143,10 @@ router.post(
 
 /** Route that delete a task found by its id. */
 router.delete('/deleteTask', async (req, res) => {
+	const taskId = req.body.taskId;
+
 	try {
-		const taskToDelete = await Task.findByIdAndDelete(req.body.taskId);
+		const taskToDelete = await Task.findByIdAndDelete(taskId);
 		res.send(taskToDelete._id + ' succesfully deleted.');
 	} catch (error) {
 		res.status(422).send({ error: error.message });
