@@ -99,21 +99,6 @@ router.get('/listTodayTasks/:categoryFilter', async (req, res) => {
 	}
 });
 
-/** Route that get a task by id. If there's a problem with the query, throws an error */
-router.get('/getTaskById/:id', async (req, res) => {
-	const taskId = req.params.id;
-
-	try {
-		const task = await Task.findById(taskId);
-		res.send(task);
-	} catch (error) {
-		console.log(error);
-		return res.status(422).send({
-			Error: 'Something went wrong retrieving task. Try again.',
-		});
-	}
-});
-
 /** Route that list all unique categories on the database.
  * If there's a problem doing the query, it throws an error.
  */
