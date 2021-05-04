@@ -18,40 +18,40 @@ function handleDataType(dataType, data) {
 			}
 		case 'duration':
 			if (data === '5 min') {
-				return 300;
+				return 5;
 			}
 			if (data === '15 min') {
-				return 900;
+				return 15;
 			}
 			if (data === '30 min') {
-				return 1800;
+				return 30;
 			}
 			if (data === '45 min') {
-				return 2700;
+				return 45;
 			}
 			if (data === '1 h') {
-				return 3600;
+				return 60;
 			}
 			if (data === '2 h') {
-				return 7200;
+				return 120;
 			}
 			if (data === '3 h') {
-				return 10800;
+				return 180;
 			}
 			if (data === '4 h') {
-				return 14400;
+				return 240;
 			}
 			if (data === '5 h') {
-				return 18000;
+				return 300;
 			}
 			if (data === '6 h') {
-				return 21600;
+				return 360;
 			}
 			if (data === '7 h') {
-				return 25200;
+				return 420;
 			}
 			if (data === '8 h') {
-				return 28800;
+				return 480;
 			}
 		case 'color':
 			if (data === 'Black') {
