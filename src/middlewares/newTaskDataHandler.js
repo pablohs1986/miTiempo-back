@@ -85,6 +85,6 @@ function handleDataType(dataType, data) {
 				return '#FFF924';
 			}
 		case 'isPomodoro':
-			data === 'Yes' ? true : false;
+			return data === 'Yes' ? true : false;
 	}
 }
