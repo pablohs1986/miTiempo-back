@@ -52,6 +52,8 @@ function handleDataType(dataType, data) {
 			}
 			if (data === '8 h') {
 				return 480;
+			} else {
+				return data;
 			}
 		case 'color':
 			if (data === 'Black') {
