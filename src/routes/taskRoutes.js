@@ -7,13 +7,13 @@ const newTaskDataHandler = require('../middlewares/newTaskDataHandler');
 
 // Express router instance
 const router = express.Router();
-router.use(requireAuth); //Everything done here, need to validate the token
+// router.use(requireAuth); //Everything done here, need to validate the token
 
 /** Route that adds a task for a user.
  * It receives a token that is validated by the authorization layer. If the
  * validation is successful, make a request for add a new task for that user.
  */
-router.post('/addTask', newTaskDataHandler, async (req, res) => {
+router.post('/addTask', requireAuth, newTaskDataHandler, async (req, res) => {
 	const {
 		title,
 		description,
@@ -52,7 +52,7 @@ router.post('/addTask', newTaskDataHandler, async (req, res) => {
  * filtered or not by category. If there's a problem doing the query,
  * it throws an error.
  */
-router.get('/listTasks/:categoryFilter', async (req, res) => {
+router.get('/listTasks/:categoryFilter', requireAuth, async (req, res) => {
 	try {
 		if (req.params.categoryFilter === 'All') {
 			const tasks = await Task.find({ userId: req.user._id })
@@ -81,7 +81,7 @@ router.get('/listTasks/:categoryFilter', async (req, res) => {
  * filtered or not by category. If there's a problem doing the query,
  * it throws an error.
  */
-router.get('/listTodayTasks/:categoryFilter', async (req, res) => {
+router.get('/listTodayTasks/:categoryFilter', requireAuth, async (req, res) => {
 	try {
 		if (req.params.categoryFilter === 'All') {
 			const tasks = await Task.find({
@@ -110,7 +110,7 @@ router.get('/listTodayTasks/:categoryFilter', async (req, res) => {
 /** Route that list all unique categories on the database.
  * If there's a problem doing the query, it throws an error.
  */
-router.get('/listCategories', async (req, res) => {
+router.get('/listCategories', requireAuth, async (req, res) => {
 	try {
 		const categories = await Task.find().distinct('category');
 		res.send(categories);
@@ -127,6 +127,7 @@ router.get('/listCategories', async (req, res) => {
  * */
 router.post(
 	'/updateTask',
+	requireAuth,
 	newTaskDataHandler,
 	checkFieldsToUpdate,
 	async (req, res) => {
@@ -150,7 +151,7 @@ router.post(
 );
 
 /** Route that delete a task found by its id. */
-router.delete('/deleteTask', async (req, res) => {
+router.delete('/deleteTask', requireAuth, async (req, res) => {
 	const taskId = req.body.taskId;
 
 	try {
