@@ -14,8 +14,8 @@ const cors = require('cors');
 const app = express();
 app.use(
 	cors({
-		allowedHeaders: ['authorization', 'Content-Type', "Access-Control-Allow-Origin"], // you can change the headers
-		exposedHeaders: ['authorization', "Access-Control-Allow-Origin"], // you can change the headers
+		allowedHeaders: ['authorization', 'Content-Type'], // you can change the headers
+		exposedHeaders: ['authorization'], // you can change the headers
 		origin: '*',
 		methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
 		preflightContinue: false,
