@@ -14,11 +14,11 @@ const cors = require('cors');
 const app = express();
 app.use(
 	cors({
-		allowedHeaders: ['authorization', 'Content-Type'], // you can change the headers
-		exposedHeaders: ['authorization'], // you can change the headers
+		allowedHeaders: ['authorization', 'Content-Type'],
+		exposedHeaders: ['authorization'],
 		origin: '*',
 		methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-		preflightContinue: true,
+		preflightContinue: false,
 	})
 );
 app.use(bodyParser.json());
