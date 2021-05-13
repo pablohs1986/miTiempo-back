@@ -58,7 +58,7 @@ router.get(
 	async (req, res) => {
 		const user = req.user;
 		const redirectURL = '/loginGoogle?ID=' + user._id;
-		res.redirect(redirectURL);
+		// res.redirect(redirectURL);
 	}
 );
 
