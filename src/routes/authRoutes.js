@@ -5,7 +5,6 @@ const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20');
 const jwt = require('jsonwebtoken');
 const requireAuth = require('../middlewares/requireAuth');
-const cors = require('cors');
 
 // Express router instance
 const router = express.Router();
@@ -44,7 +43,6 @@ passport.use(
 
 router.get(
 	'/auth/google',
-	cors(),
 	passport.authenticate('google', {
 		scope: ['profile', 'email'],
 	})
@@ -56,7 +54,6 @@ router.get('/current_user', (req, res) => {
 
 router.get(
 	'/auth/google/callback',
-	cors(),
 	passport.authenticate('google', { failureRedirect: '/', session: false }),
 	async (req, res) => {
 		const user = req.user;

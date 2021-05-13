@@ -18,7 +18,7 @@ app.use(
 		exposedHeaders: ['authorization'], // you can change the headers
 		origin: '*',
 		methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-		preflightContinue: false,
+		preflightContinue: true,
 	})
 );
 app.use(bodyParser.json());
