@@ -56,30 +56,9 @@ router.get(
 	'/auth/google/callback',
 	passport.authenticate('google', { failureRedirect: '/', session: false }),
 	async (req, res) => {
-		const _id = req.user._id;
-
-		if (!_id) {
-			return res
-				.status(422)
-				.send({ error: ' Must provide Google validation.' });
-		}
-
-		const user = await User.findOne({ _id });
-
-		if (!user) {
-			return res
-				.status(422)
-				.send({ error: 'Invalid Google validation.' });
-		}
-
-		try {
-			const token = jwt.sign({ userId: user._id }, process.env.TOKEN_KEY);
-			res.send({ token });
-		} catch (err) {
-			return res
-				.status(422)
-				.send({ Error: 'Invalid Google validation.' });
-		}
+		const user = req.user;
+		const redirectURL = '/loginGoogle?ID=' + user._id;
+		res.redirect(redirectURL);
 	}
 );
 
