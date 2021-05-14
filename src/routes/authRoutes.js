@@ -57,7 +57,7 @@ router.get(
 	passport.authenticate('google', { failureRedirect: '/', session: false }),
 	async (req, res) => {
 		const user = req.user;
-		const redirectURL = '/loginGoogle?ID=' + user._id;
+		const redirectURL = 'http://localhost:19006/loginGoogle?ID=' + user._id;
 		res.redirect(redirectURL);
 	}
 );
