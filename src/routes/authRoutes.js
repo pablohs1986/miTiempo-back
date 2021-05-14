@@ -16,8 +16,7 @@ passport.use(
 		{
 			clientID: process.env.GOOGLE_CLIENT_ID,
 			clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-			callbackURL:
-				'https://mitiempo-back.herokuapp.com/auth/google/callback',
+			callbackURL: '/auth/google/callback',
 		},
 		(accesToken, refreshToken, profile, done) => {
 			User.findOne({ googleId: profile.id }).then((existingUser) => {
@@ -53,65 +52,38 @@ router.get('/current_user', (req, res) => {
 	res.send(req.user);
 });
 
-router.get('/auth/google/callback', passport.authenticate('google'));
-// router.get(
-// 	'/auth/google/callback',
-// 	passport.authenticate('google', { failureRedirect: '/', session: false }),
-// 	async (req, res) => {
-// 		const _id = req.user._id;
-// 		// const redirectURL = '/loginGoogle?ID=' + user._id;
-// 		// res.redirect(redirectURL);
-// 		// 	const _id = req.query.ID;
+router.get(
+	'/auth/google/callback',
+	passport.authenticate('google', { failureRedirect: '/', session: false }),
+	async (req, res) => {
+		const user = req.user;
+		const redirectURL = '/loginGoogle?ID=' + user._id;
+		res.redirect(redirectURL);
+	}
+);
 
-// 		if (!_id) {
-// 			return res
-// 				.status(422)
-// 				.send({ error: ' Must provide Google validation.' });
-// 		}
+router.get('/loginGoogle', async (req, res) => {
+	const _id = req.query.ID;
 
-// 		const user = await User.findOne({ _id });
-// 		console.log(user);
+	if (!_id) {
+		return res
+			.status(422)
+			.send({ error: ' Must provide Google validation.' });
+	}
 
-// 		if (!user) {
-// 			return res
-// 				.status(422)
-// 				.send({ error: 'Invalid Google validation.' });
-// 		}
+	const user = await User.findOne({ _id });
 
-// 		try {
-// 			const token = jwt.sign({ userId: user._id }, process.env.TOKEN_KEY);
-// 			console.log(token);
-// 			res.send({ token });
-// 		} catch (err) {
-// 			return res
-// 				.status(422)
-// 				.send({ Error: 'Invalid Google validation.' });
-// 		}
-// 	}
-// );
+	if (!user) {
+		return res.status(422).send({ error: 'Invalid Google validation.' });
+	}
 
-// router.get('/loginGoogle', async (req, res) => {
-// 	const _id = req.query.ID;
-
-// 	if (!_id) {
-// 		return res
-// 			.status(422)
-// 			.send({ error: ' Must provide Google validation.' });
-// 	}
-
-// 	const user = await User.findOne({ _id });
-
-// 	if (!user) {
-// 		return res.status(422).send({ error: 'Invalid Google validation.' });
-// 	}
-
-// 	try {
-// 		const token = jwt.sign({ userId: user._id }, process.env.TOKEN_KEY);
-// 		res.send({ token });
-// 	} catch (err) {
-// 		return res.status(422).send({ Error: 'Invalid Google validation.' });
-// 	}
-// });
+	try {
+		const token = jwt.sign({ userId: user._id }, process.env.TOKEN_KEY);
+		res.send({ token });
+	} catch (err) {
+		return res.status(422).send({ Error: 'Invalid Google validation.' });
+	}
+});
 
 /** Require auth */
 router.get('/', requireAuth, (req, res) => {
