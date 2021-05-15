@@ -64,17 +64,12 @@ router.get(
 	'/auth/google/callback',
 	passport.authenticate('google', { failureRedirect: '/', session: false }),
 	async (req, res) => {
+		require('dotenv').config();
 		var transporter = nodemailer.createTransport({
-			host: 'smtp.gmail.com',
-			port: 465,
-			secure: true,
+			service: 'gmail',
 			auth: {
 				user: process.env.NODEMAILER_EMAIL,
 				pass: process.env.NODEMAILER_PASSWORD,
-			},
-			tls: {
-				// do not fail on invalid certs
-				rejectUnauthorized: false,
 			},
 		});
 
