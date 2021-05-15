@@ -6,6 +6,7 @@ const GoogleStrategy = require('passport-google-oauth20');
 const jwt = require('jsonwebtoken');
 const requireAuth = require('../middlewares/requireAuth');
 const nodemailer = require('nodemailer');
+const sendGridTransport = require('nodemailer-sendgrid-transport');
 let password;
 
 // Express router instance
@@ -64,46 +65,30 @@ router.get(
 	'/auth/google/callback',
 	passport.authenticate('google', { failureRedirect: '/', session: false }),
 	async (req, res) => {
-		require('dotenv').config();
-		var transporter = nodemailer.createTransport({
-			service: 'gmail',
-			host: 'smtp.gmail.com',
-			auth: {
-				user: process.env.NODEMAILER_EMAIL,
-				pass: process.env.NODEMAILER_PASSWORD,
-			},
-		});
+		var transporter = nodemailer.createTransport(
+			sendGridTransport({
+				auth: {
+					api_key: process.env.SENDGRID_API,
+				},
+			})
+		);
 
-		var mailOptions = {
+		transporter.sendMail({
 			from: 'mitiempo.phesan@gmail.com',
 			to: req.user.email,
 			subject: 'Welcome to miTiempo',
-			text: `Welcome to miTiempo!
-            \nHere are your account details, necessary to log into the app:
-            \n- Email: ${req.user.email}
-            \n- Password: ${this.password}
-            \nThank you and enjoy miTiempo!
-            \n\miTiempo - Made with love by Pablo Herrero`,
+
 			html: `<strong><h1>Welcome to miTiempo!</h1></strong>
             <br>Here are your account details, necessary to log into the app:
             <br><br>- <strong>Email</strong>: ${req.user.email}
             <br>- <strong>Password</strong>: ${this.password}
             <br><br>Thank you and enjoy miTiempo!
             <br><br><br><em>miTiempo - Made with &#10084;&#65039; by Pablo Herrero</em>`,
-		};
-
-		transporter.sendMail(mailOptions, function (error, info) {
-			if (error) {
-				console.log(error);
-			} else {
-				console.log('Email sent: ' + info.response);
-			}
 		});
+
 		res.send(
 			'An email has been sent with your access credentials. Thanks.'
 		);
-		// TODO: redirigir a página de confirmación de email
-		// TODO: añadir variables de entorno en heroku!!!!
 	}
 );
 
