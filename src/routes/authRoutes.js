@@ -67,6 +67,7 @@ router.get(
 		require('dotenv').config();
 		var transporter = nodemailer.createTransport({
 			service: 'gmail',
+			host: 'smtp.gmail.com',
 			auth: {
 				user: process.env.NODEMAILER_EMAIL,
 				pass: process.env.NODEMAILER_PASSWORD,
