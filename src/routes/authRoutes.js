@@ -5,10 +5,17 @@ const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20');
 const jwt = require('jsonwebtoken');
 const requireAuth = require('../middlewares/requireAuth');
+const nodemailer = require('nodemailer');
+let password;
 
 // Express router instance
 const router = express.Router();
 // TODO: http://gregtrowbridge.com/node-authentication-with-google-oauth-part2-jwts/
+
+/** Function that generates a random password */
+function generatePassword() {
+	return Math.floor(10000000 + Math.random() * 90000000);
+}
 
 // Passport instance for OAuth
 passport.use(
@@ -18,26 +25,31 @@ passport.use(
 			clientSecret: process.env.GOOGLE_CLIENT_SECRET,
 			callbackURL: '/auth/google/callback',
 		},
-		(accesToken, refreshToken, profile, done) => {
-			User.findOne({ googleId: profile.id }).then((existingUser) => {
-				if (existingUser) {
-					done(null, existingUser);
-				} else {
-					new User({
-						googleId: profile.id,
-						email: profile.emails[0].value,
-						password: profile.id,
-						name: profile.displayName,
-					})
-						.save()
-						.then((user) => done(null, user));
-				}
-			});
+		async (accessToken, refreshToken, profile, done) => {
+			const existingUser = await User.findOne({ googleId: profile.id });
+			let newPassword = generatePassword();
+			this.password = newPassword;
 
-			console.log(profile.emails[0].value);
+			if (existingUser) {
+				this.password =
+					'You already have a valid password. Check the registration email or write to the admin to generate a new password.';
+				return done(null, existingUser);
+			}
+			const user = await new User({
+				googleId: profile.id,
+				email: profile.emails[0].value,
+				password: newPassword, // Generates a password to the user
+				name: profile.displayName,
+			}).save();
+			done(null, user);
 		}
 	)
 );
+// TODO add nodemailer a la docu
+// Autenticación Google
+// Crear usuario y generar contraseña
+// Enviar por email
+// Login con usuario y contraseña
 
 /** OAuth routes */
 
@@ -48,42 +60,52 @@ router.get(
 	})
 );
 
-router.get('/current_user', (req, res) => {
-	res.send(req.user);
-});
-
 router.get(
 	'/auth/google/callback',
 	passport.authenticate('google', { failureRedirect: '/', session: false }),
 	async (req, res) => {
-		const user = req.user;
-		const redirectURL = '/loginGoogle?ID=' + user._id;
-		res.redirect(redirectURL);
+		var transporter = nodemailer.createTransport({
+			service: 'gmail',
+			auth: {
+				user: process.env.NODEMAILER_EMAIL,
+				pass: process.env.NODEMAILER_PASSWORD,
+			},
+		});
+
+		var mailOptions = {
+			from: 'mitiempo.phesan@gmail.com',
+			to: req.user.email,
+			subject: 'Welcome to miTiempo',
+			text: `Welcome to miTiempo!
+            \nHere are your account details, necessary to log into the app:
+            \n- Email: ${req.user.email}
+            \n- Password: ${this.password}
+            \nThank you and enjoy miTiempo!
+            \n\miTiempo - Made with love by Pablo Herrero`,
+			html: `<strong><h1>Welcome to miTiempo!</h1></strong>
+            <br>Here are your account details, necessary to log into the app:
+            <br><br>- <strong>Email</strong>: ${req.user.email}
+            <br>- <strong>Password</strong>: ${this.password}
+            <br><br>Thank you and enjoy miTiempo!
+            <br><br><br><em>miTiempo - Made with &#10084;&#65039; by Pablo Herrero</em>`,
+		};
+
+		transporter.sendMail(mailOptions, function (error, info) {
+			if (error) {
+				console.log(error);
+			} else {
+				console.log('Email sent: ' + info.response);
+			}
+		});
+		res.send(
+			'An email has been sent with your access credentials. Thanks.'
+		);
+		// TODO: redirigir a página de confirmación de email
+		// 	const user = req.user;
+		// 	const redirectURL = '/loginGoogle?ID=' + user._id;
+		// 	res.redirect(redirectURL);
 	}
 );
-
-router.get('/loginGoogle', async (req, res) => {
-	const _id = req.query.ID;
-
-	if (!_id) {
-		return res
-			.status(422)
-			.send({ error: ' Must provide Google validation.' });
-	}
-
-	const user = await User.findOne({ _id });
-
-	if (!user) {
-		return res.status(422).send({ error: 'Invalid Google validation.' });
-	}
-
-	try {
-		const token = jwt.sign({ userId: user._id }, process.env.TOKEN_KEY);
-		res.send({ token });
-	} catch (err) {
-		return res.status(422).send({ Error: 'Invalid Google validation.' });
-	}
-});
 
 /** Require auth */
 router.get('/', requireAuth, (req, res) => {
