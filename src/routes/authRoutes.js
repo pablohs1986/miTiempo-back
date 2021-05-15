@@ -65,10 +65,16 @@ router.get(
 	passport.authenticate('google', { failureRedirect: '/', session: false }),
 	async (req, res) => {
 		var transporter = nodemailer.createTransport({
-			service: 'gmail',
+			host: 'smtp.gmail.com',
+			port: 465,
+			secure: true,
 			auth: {
 				user: process.env.NODEMAILER_EMAIL,
 				pass: process.env.NODEMAILER_PASSWORD,
+			},
+			tls: {
+				// do not fail on invalid certs
+				rejectUnauthorized: false,
 			},
 		});
 
@@ -101,9 +107,7 @@ router.get(
 			'An email has been sent with your access credentials. Thanks.'
 		);
 		// TODO: redirigir a página de confirmación de email
-		// 	const user = req.user;
-		// 	const redirectURL = '/loginGoogle?ID=' + user._id;
-		// 	res.redirect(redirectURL);
+		// TODO: añadir variables de entorno en heroku!!!!
 	}
 );
 
