@@ -11,14 +11,11 @@ let password;
 
 // Express router instance
 const router = express.Router();
-// TODO: http://gregtrowbridge.com/node-authentication-with-google-oauth-part2-jwts/
 
-/** Function that generates a random password */
-function generatePassword() {
-	return Math.floor(10000000 + Math.random() * 90000000);
-}
-
-// Passport instance for OAuth
+/** Passport Google Strategy: checks if the Google id of the account selected
+ * by the user at the Google prompt is already registered in the database. If so,
+ * assign a return message to the password variable. If not, create a new user
+ * with that Google id. Subsequently, the strategy redirects to the established callback. */
 passport.use(
 	new GoogleStrategy(
 		{
@@ -33,27 +30,27 @@ passport.use(
 
 			if (existingUser) {
 				this.password =
-					'You already have a valid password. Check the registration email or write to the admin to generate a new password.';
+					'You already have a valid password. Check the registration email or reply to this email to request a new password.';
 				return done(null, existingUser);
 			}
 			const user = await new User({
 				googleId: profile.id,
 				email: profile.emails[0].value,
-				password: newPassword, // Generates a password to the user
+				password: newPassword,
 				name: profile.displayName,
 			}).save();
 			done(null, user);
 		}
 	)
 );
-// TODO add nodemailer a la docu
-// Autenticación Google
-// Crear usuario y generar contraseña
-// Enviar por email
-// Login con usuario y contraseña
 
-/** OAuth routes */
+/** Function that generates a random password */
+function generatePassword() {
+	return Math.floor(10000000 + Math.random() * 90000000);
+}
 
+/** Route that redirects to the Google authentication system, through
+ * the Google Strategy established for passport. */
 router.get(
 	'/auth/google',
 	passport.authenticate('google', {
@@ -61,6 +58,10 @@ router.get(
 	})
 );
 
+/** Callback for Google Strategy. It uses Nodemailer and SendGrid to send
+ * an email to the registered user with a random password or a message
+ * indicating that they already have a password. It then redirects to the
+ * email sending confirmation page.*/
 router.get(
 	'/auth/google/callback',
 	passport.authenticate('google', { failureRedirect: '/', session: false }),
@@ -77,22 +78,19 @@ router.get(
 			from: 'mitiempo.phesan@gmail.com',
 			to: req.user.email,
 			subject: 'Welcome to miTiempo',
-
-			html: `<strong><h1>Welcome to miTiempo!</h1></strong>
+			html: `<strong><h1 style="color: #C830CC">Welcome to miTiempo</h1></strong>
             <br>Here are your account details, necessary to log into the app:
-            <br><br>- <strong>Email</strong>: ${req.user.email}
-            <br>- <strong>Password</strong>: ${this.password}
+            <br><br>- <strong style="color: #C830CC">Email</strong>: ${req.user.email}
+            <br>- <strong style="color: #C830CC">Password</strong>: ${this.password}
             <br><br>Thank you and enjoy miTiempo!
             <br><br><br><em>miTiempo - Made with &#10084;&#65039; by Pablo Herrero</em>`,
 		});
 
-		res.send(
-			'An email has been sent with your access credentials. Thanks.'
-		);
+		res.redirect('https://mitiempoapp.netlify.app/signupconfirmation');
 	}
 );
 
-/** Require auth */
+/** Route of entry to the app */
 router.get('/', requireAuth, (req, res) => {
 	// res.send(`Your email ${req.user.email}`);
 	res.send(req.user);
