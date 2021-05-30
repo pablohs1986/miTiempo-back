@@ -15,7 +15,7 @@ const router = express.Router();
  */
 router.post('/addTask', requireAuth, newTaskDataHandler, async (req, res) => {
 	const {
-		title,
+		title,  
 		description,
 		day,
 		duration,

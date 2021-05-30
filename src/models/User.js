@@ -21,7 +21,6 @@ const userSchema = new mongoose.Schema({
 userSchema.pre('save', function (next) {
 	const user = this;
 
-	// FIXME: si lo quito, no se hace login tras cambiar contraseña
 	if (!user.isModified('password')) {
 		return next();
 	}
