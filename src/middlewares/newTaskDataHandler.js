@@ -17,6 +17,9 @@ function handleDataType(dataType, data) {
 				return new Date().toLocaleString('en-GB', { weekday: 'long' });
 			}
 		case 'duration':
+			if (data === 'Duration') {
+				return 0;
+			}
 			if (data === '5 min') {
 				return 5;
 			}
