@@ -83,6 +83,9 @@ function handleDataType(dataType, data) {
 			if (data === 'Pink') {
 				return '#7C1280';
 			}
+			if (data === 'Purple') {
+				return '#6B007D';
+			}
 			if (data === 'Red') {
 				return '#FF2431';
 			}
