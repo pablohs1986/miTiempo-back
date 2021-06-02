@@ -16,27 +16,11 @@ const router = express.Router();
 router.get('/getUserInfo', requireAuth, async (req, res) => {
 	try {
 		const user = await User.findById(req.user._id);
+        const id = user._id;
 		const email = user.email;
 		const name = user.name;
 		const city = user.city;
-		res.send({ email, name, city });
-	} catch (error) {
-		return res.status(422).send({
-			Error: 'Something went wrong retrieving user information. Try again.',
-		});
-	}
-});
-
-/** Route that retrieves the user id.
- * It receives a token that is validated by the authorization layer. If the
- * validation is successful, send the user information. If the validation
- * is not correct, it sends an error message.
- */
-router.get('/getUserId', requireAuth, async (req, res) => {
-	try {
-		const user = await User.findById(req.user._id);
-		const id = user._id;
-		res.send({ id });
+		res.send({ id, email, name, city });
 	} catch (error) {
 		return res.status(422).send({
 			Error: 'Something went wrong retrieving user information. Try again.',
